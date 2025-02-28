@@ -4,7 +4,8 @@ from flask import session, redirect, url_for, flash
 
 def load_users():
     users = {}
-    base_dir = os.path.dirname(os.path.abspath(__file__))
+    # Changed to look for users.txt in the root directory
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     users_path = os.path.join(base_dir, 'users.txt')
     try:
         with open(users_path, 'r') as f:
@@ -14,6 +15,8 @@ def load_users():
                     users[username] = password
     except FileNotFoundError:
         print("users.txt not found. Create it with username:password lines.")
+        # Provide a default user in case the file doesn't exist
+        users = {"jack": "water"}
     return users
 
 def login_required(f):

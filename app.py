@@ -11,9 +11,8 @@ from core.auth import login_bp
 from core.chat import chat_bp
 from core.history import history_bp
 
-# Initialize database on first request
-@app.before_first_request
-def setup():
+# Initialize database once on startup
+with app.app_context():
     init_db()
 
 # Register blueprints

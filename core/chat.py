@@ -3,11 +3,10 @@ import json
 import uuid
 from datetime import datetime
 from flask import Blueprint, render_template, request, jsonify, session, Response, stream_with_context
-from utils import login_required
-from models import Conversation, Message, db_session
+from core.utils import login_required
+from core.models import Conversation, Message, db_session
 from apis.openai import openai_query, openai_stream_query
 from apis.anthropic import anthropic_query, anthropic_stream_query
-from apis.google import google_gemini_query, google_gemini_stream_query
 
 chat_bp = Blueprint('chat', __name__)
 
@@ -15,7 +14,7 @@ chat_bp = Blueprint('chat', __name__)
 @chat_bp.route('/')
 @login_required
 def index():
-    return render_template('index.html', conversation_uuid=None, conversation_history=[]) # Removed model_names here
+    return render_template('index.html', conversation_uuid=None, conversation_history=[]) 
 
 
 @chat_bp.route('/chat/<conversation_uuid>')
@@ -38,10 +37,6 @@ def chat_conversation(conversation_uuid):
         'openai_chatgpt-4o-latest': 'GPT-4o',
         'openai_o3-mini': 'o3-mini',
         'openai_gpt-4.5-preview': 'GPT-4.5',
-        'google_gemini-2.0-flash-thinking-exp-01-21': 'Gemini 2.0 FT',
-        'google_gemini-2.0-flash-exp': 'Gemini 2.0',
-        'google_gemini-exp-1206': 'Gemini 1206',
-        'deepseek': 'DeepSeek R1'
     }
 
     return render_template('index.html',  # Render index.html
@@ -92,11 +87,6 @@ def llm_query():
             if error_message:
                 return jsonify({"error": error_message}), 500
 
-        elif selected_model.startswith("google"):
-            assistant_response, error_message = google_gemini_query(conversation_history, selected_model)
-            if error_message:
-                return jsonify({"error": error_message}), 500
-
         elif selected_model == 'deepseek':
             assistant_response = "DeepSeek API response placeholder."
         else:
@@ -108,7 +98,6 @@ def llm_query():
         assistant_message_db = Message(conversation_id=conversation_uuid, role='assistant', content=assistant_response)
         db_session.add_all([user_message_db, assistant_message_db])
         db_session.commit()
-
 
         return jsonify({"response": assistant_response, "conversation_history": conversation_history})
     except Exception as e:
@@ -139,9 +128,6 @@ def llm_query_stream():
         elif selected_model == 'anthropic':
             yield from anthropic_stream_query(conversation_history)
 
-        elif selected_model.startswith("google"):
-            yield from google_gemini_stream_query(conversation_history, selected_model)
-
         elif selected_model == 'deepseek':
             yield "DeepSeek streaming not implemented yet."
         else:
@@ -166,6 +152,5 @@ def llm_query_stream():
             assistant_message_db = Message(conversation_id=conversation_uuid, role='assistant', content=assistant_response_content)
             db_session.add(assistant_message_db)
             db_session.commit()
-
 
     return Response(stream_with_context(generate_and_save()), mimetype='text/plain')
