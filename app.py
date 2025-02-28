@@ -1,9 +1,9 @@
 import os
-from flask import Flask
+from flask import Flask, redirect, url_for
 
 # Create Flask app
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY")
+app.secret_key = os.environ.get("SECRET_KEY", "default-secret-key-for-development")
 
 # Import components after app is created
 from core.models import init_db
@@ -19,6 +19,11 @@ with app.app_context():
 app.register_blueprint(login_bp)
 app.register_blueprint(chat_bp)
 app.register_blueprint(history_bp)
+
+# Root route - redirect to login
+@app.route('/')
+def root():
+    return redirect(url_for('login.login'))
 
 # This is important for Vercel deployment
 app.debug = False
