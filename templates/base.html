@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="LLM Chat Interface">
+  <title>{% block title %}###TEST ENVIRONMENT###{% endblock %}</title>
+
+  <!-- Your main CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='default.css') }}">
+
+  <!-- Prism CSS for syntax highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+
+  <!-- Optional: Google Fonts (if you want to update typography) -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Fira+Code&display=swap" rel="stylesheet">
+
+  <!-- Marked for client-side Markdown processing -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <!-- Prism JS for syntax highlighting -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+</head>
+<body>
+    <header class="nav">
+      <div class="nav-content">
+        <a href="{{ url_for('chat.index') }}" class="nav-brand mono">LLM Chat</a>
+        {% if session.get('username') %}
+          <nav>
+            <ul role="list" style="display: flex; gap: var(--space-lg); list-style: none;">
+              <li><a href="{{ url_for('history.history') }}" class="nav-link mono small">History</a></li>
+              <li><a href="{{ url_for('login.logout') }}" class="nav-link mono small">{{ session.username }} → Logout</a></li>
+            </ul>
+          </nav>
+        {% endif %}
+      </div>
+    </header>
+
+  <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert" role="alert">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <script>
+    // Minimal JS for flash message handling
+    document.addEventListener('DOMContentLoaded', () => {
+      const alerts = document.querySelectorAll('.alert');
+      alerts.forEach(alert => {
+        setTimeout(() => {
+          alert.style.opacity = '0';
+          setTimeout(() => alert.remove(), 300);
+        }, 5000);
+      });
+    });
+  </script>
+</body>
+</html>

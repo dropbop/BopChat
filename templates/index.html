@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}###TEST ENVIRONMENT###{% endblock %}
+{% block content %}
+<div class="chat-interface">
+  <h2>Conversation</h2>
+    <div id="conversationHistory" class="conversation">
+      {% if conversation_history %}  {# Check if conversation_history exists and is not empty #}
+        {% for message in conversation_history %}
+          <div class="message {% if message.role == 'user' %}user-message{% else %}llm-message{% endif %}">
+            <strong class="mono small">
+              {% if message.role == 'user' %}You:{% elif message.role == 'assistant' %}{{ model_names[model] }}:{% else %}{{ message.role|capitalize }}:{% endif %}
+            </strong>
+            {{ message.content | markdown }}  {# Assuming you have 'markdown' filter and model_names in backend JS #}
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+
+  <form id="llmForm" class="form">
+    <input type="hidden" id="conversationHistoryInput" name="conversation_history" value="">
+
+    <div class="input-group">
+      <label for="prompt" class="label">Your Prompt</label>
+      <textarea id="prompt" name="prompt" class="textarea" rows="3" required></textarea>
+    </div>
+
+    <div class="input-group">
+      <label for="model" class="label">Model/API</label>
+      <select id="model" name="model" class="select">
+        <option value="anthropic">Claude Sonnet 3.6</option>
+        <option value="openai_chatgpt-4o-latest">OpenAI GPT-4o</option>
+        <option value="openai_o3-mini">OpenAI o3-mini</option>
+        <option value="openai_gpt-4.5-preview">OpenAI GPT-4.5</option>
+        <option value="google_gemini-2.0-flash-thinking-exp-01-21">Gemini 2.0 Flash Thinking</option>
+        <option value="google_gemini-2.0-flash-exp">Gemini 2.0 Flash</option>
+        <option value="google_gemini-exp-1206">Gemini Exp 1206</option>
+        <option value="deepseek">DeepSeek</option>
+      </select>
+    </div>
+
+    <button type="submit" class="button">Send →</button>
+  </form>
+</div>
+
+<script src="{{ url_for('static', filename='js/chat_interface.js') }}"></script>  <!-- Link to external JS file is HERE -->
+{% endblock %}

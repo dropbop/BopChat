@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Conversation History{% endblock %}
+{% block content %}
+  <h2>{{ session.username }}'s Conversations</h2>
+  {% if conversations %}
+    <div class="history-list">
+      {% for conv in conversations %}
+        <article class="history-item">
+          <header class="history-header">
+            <a href="{{ url_for('chat.chat_conversation', conversation_uuid=conv.id) }}" class="history-link">  {# Added <a> tag here #}
+              <time class="mono small">{{ conv.start_timestamp.strftime("%Y-%m-%d %H:%M:%S") }}</time>
+            </a> {# Closing </a> tag #}
+          </header>
+          {# <pre class="history-content mono">{{ conv.conversation_json | tojson(indent=2) }}</pre> #}
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-secondary">No conversations found.</p>
+  {% endif %}
+  <a href="{{ url_for('chat.index') }}" class="button">← Back to Chat</a>
+{% endblock %}
