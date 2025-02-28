@@ -1,43 +1,33 @@
 import os
-from flask import Flask, redirect, url_for, flash
-from functools import wraps
-from flask import session, redirect, url_for, flash
+from flask import Flask, render_template_string
 
-# Create Flask app
+# Create a minimal Flask application for troubleshooting
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "default-secret-key-for-development")
+app.secret_key = os.environ.get("SECRET_KEY", "default-dev-key")
 
-# Login required decorator - moved here to prevent circular imports
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'username' not in session:
-            flash("Please log in first.", "warning")
-            return redirect(url_for('login.login'))
-        return f(*args, **kwargs)
-    return decorated_function
-
-# Load users function - moved here to prevent circular imports
-def load_users():
-    # For now, embedded credentials directly
-    return {"jack": "water"}
-
-# Import components after defining necessary functions
-from core.auth import login_bp
-from core.chat import chat_bp
-
-# Register blueprints
-app.register_blueprint(login_bp)
-app.register_blueprint(chat_bp)
-
-# Root route - redirect to login
 @app.route('/')
-def root():
-    return redirect(url_for('login.login'))
+def hello():
+    return render_template_string("""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Troubleshooting App</title>
+        <style>
+            body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+            .card { border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        </style>
+    </head>
+    <body>
+        <h1>Troubleshooting App</h1>
+        <div class="card">
+            <p>If you can see this page, basic Flask routing is working!</p>
+        </div>
+    </body>
+    </html>
+    """)
 
-# This is important for Vercel deployment
-app.debug = os.environ.get("DEBUG", "False").lower() == "true"
+# Debug configuration
+app.debug = True
 
-# Required for Vercel
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
