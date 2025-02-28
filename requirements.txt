@@ -1,0 +1,8 @@
+flask==2.0.1
+Werkzeug==2.0.1
+sqlalchemy==1.4.23
+anthropic==0.5.0
+openai==1.0.0
+python-dotenv==1.0.0
+markdown==3.4.3
+markupsafe==2.0.1
