@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, session
-from utils import login_required
-from models import Conversation
+from core.utils import login_required
+from core.models import Conversation
 
 history_bp = Blueprint('history', __name__)
 
