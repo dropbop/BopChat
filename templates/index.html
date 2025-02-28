@@ -1,43 +1,9 @@
-{% extends 'base.html' %}
-{% block title %}###TEST ENVIRONMENT###{% endblock %}
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
 {% block content %}
-<div class="chat-interface">
-  <h2>Conversation</h2>
-    <div id="conversationHistory" class="conversation">
-      {% if conversation_history %}  {# Check if conversation_history exists and is not empty #}
-        {% for message in conversation_history %}
-          <div class="message {% if message.role == 'user' %}user-message{% else %}llm-message{% endif %}">
-            <strong class="mono small">
-              {% if message.role == 'user' %}You:{% elif message.role == 'assistant' %}{{ model_names[model] if model_names and model else 'Assistant' }}:{% else %}{{ message.role|capitalize }}:{% endif %}
-            </strong>
-            {{ message.content | safe }}  {# Changed from markdown filter to safe #}
-          </div>
-        {% endfor %}
-      {% endif %}
-    </div>
-
-  <form id="llmForm" class="form">
-    <input type="hidden" id="conversationHistoryInput" name="conversation_history" value="">
-
-    <div class="input-group">
-      <label for="prompt" class="label">Your Prompt</label>
-      <textarea id="prompt" name="prompt" class="textarea" rows="3" required></textarea>
-    </div>
-
-    <div class="input-group">
-      <label for="model" class="label">Model/API</label>
-      <select id="model" name="model" class="select">
-        <option value="anthropic">Claude Sonnet 3.6</option>
-        <option value="openai_chatgpt-4o-latest">OpenAI GPT-4o</option>
-        <option value="openai_o3-mini">OpenAI o3-mini</option>
-        <option value="openai_gpt-4.5-preview">OpenAI GPT-4.5</option>
-        <option value="deepseek">DeepSeek</option>
-      </select>
-    </div>
-
-    <button type="submit" class="button">Send →</button>
-  </form>
-</div>
-
-<script src="{{ url_for('static', filename='js/chat_interface.js') }}"></script>
+  <h2>Welcome, {{ username }}!</h2>
+  <p>You are logged in.</p>
+  <a href="{{ url_for('logout') }}">Logout</a>
 {% endblock %}
