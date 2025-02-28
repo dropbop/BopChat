@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from core.utils import load_users
+from app import load_users  # Import from app directly
 
 login_bp = Blueprint('login', __name__)
 
