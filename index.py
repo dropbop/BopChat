@@ -1,5 +1,10 @@
-from app import app
-
-# This is the file that Vercel looks for by default
-# It just imports and re-exports your Flask app
-# This helps with Vercel's serverless function architecture
+# Try/except block to handle import errors more gracefully
+try:
+    from app import app
+except Exception as e:
+    from flask import Flask
+    app = Flask(__name__)
+    
+    @app.route('/')
+    def error_handler():
+        return f"Application initialization error. Please check logs and configuration.", 500

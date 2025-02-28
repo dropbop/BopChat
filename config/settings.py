@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Flask settings
-SECRET_KEY = os.environ.get("SECRET_KEY", "supersecretkey")
+SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = os.environ.get("FLASK_ENV") == "development"
 
 # Database settings
@@ -13,7 +13,6 @@ DATABASE_URL = os.environ.get("DATABASE_URL", 'sqlite:///conversations.db')
 # API Keys
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
-GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 
 # Model configurations
 MODEL_NAMES = {
