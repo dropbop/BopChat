@@ -1,9 +1,0 @@
-{% extends 'base.html' %}
-{% block title %}Error{% endblock %}
-{% block content %}
-<div class="error-page">
-  <h2>Error</h2>
-  <p>{{ message }}</p>
-  <a href="{{ url_for('chat.index') }}" class="button">← Back to Chat</a>
-</div>
-{% endblock %}
