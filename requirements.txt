@@ -1,0 +1,18 @@
+# Core
+Flask
+python-dotenv
+Flask-Login
+
+# Database
+Flask-SQLAlchemy
+
+# LLM Providers
+anthropic        # For Claude models
+openai           # For GPT models
+google-generativeai  # For Gemini models
+deepseek-ai      # For DeepSeek models
+
+# Utilities
+requests
+python-dateutil
+markdown         # For formatting responses (optional)
