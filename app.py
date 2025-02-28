@@ -1,29 +1,33 @@
 from flask import Flask, render_template, request, jsonify, session
-from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
-from dotenv import load_dotenv
 import json
 
 # Import providers
 from providers.anthropic import AnthropicProvider
 
-# Load environment variables
-load_dotenv()
-
+# Initialize Flask without load_dotenv (Vercel handles env vars)
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///chat.db')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key')
 
 # Load model configurations
-with open('config/models.json') as f:
-    MODELS_CONFIG = json.load(f)
+try:
+    with open('config/models.json') as f:
+        MODELS_CONFIG = json.load(f)
+except:
+    # Fallback for serverless environment
+    MODELS_CONFIG = [
+        {
+            "id": "claude-3-7-sonnet-20250219",
+            "name": "Claude 3.7 Sonnet",
+            "provider": "anthropic",
+            "max_tokens": 4000,
+            "description": "Fast, intelligent, and capable of reasoning"
+        }
+    ]
 
 # Initialize providers
-anthropic_provider = AnthropicProvider(api_key=os.getenv('ANTHROPIC_API_KEY'))
+anthropic_provider = AnthropicProvider(api_key=os.environ.get('ANTHROPIC_API_KEY'))
 
 # Simple in-memory message storage until we implement database
 chat_history = {}
@@ -86,5 +90,9 @@ def settings():
 def login():
     return render_template('login.html', current_year=datetime.now().year)
 
+# Add handler for Vercel serverless function
+from http.server import BaseHTTPRequestHandler
+
+# For local development
 if __name__ == '__main__':
     app.run(debug=True)
