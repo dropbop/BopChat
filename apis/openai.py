@@ -1,7 +1,12 @@
 import os
 from openai import OpenAI
 
-openai_client = OpenAI()
+# Initialize the OpenAI client only if API key is available
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+openai_client = None  # Default to None
+
+if OPENAI_API_KEY:
+    openai_client = OpenAI(api_key=OPENAI_API_KEY)
 
 def openai_query(conversation_history, selected_model):
     """
@@ -15,6 +20,9 @@ def openai_query(conversation_history, selected_model):
         tuple: (assistant_response, error_message) - error_message is None if no error.
     """
     try:
+        if not OPENAI_API_KEY or not openai_client:
+            return None, "OpenAI API key not configured."
+            
         if selected_model == "openai_chatgpt-4o-latest":
             openai_model = "chatgpt-4o-latest"
         elif selected_model == "openai_o3-mini":
@@ -46,6 +54,10 @@ def openai_stream_query(conversation_history, selected_model):
     Yields:
         str: Chunks of the streaming response.
     """
+    if not OPENAI_API_KEY or not openai_client:
+        yield "OpenAI API key not configured."
+        return
+        
     if selected_model == "openai_chatgpt-4o-latest":
         openai_model = "chatgpt-4o-latest"
     elif selected_model == "openai_o3-mini":
@@ -71,11 +83,17 @@ def openai_stream_query(conversation_history, selected_model):
                 yield content
     except Exception as e:
         yield f"\n[OpenAI streaming error: {str(e)}. Falling back...]\n"
-        response = openai_client.chat.completions.create(
-            model=openai_model,
-            messages=conversation_history,
-            max_tokens=1024,
-            temperature=0.7,
-            stream=False,
-        )
-        yield response.choices[0].message.content
+        try:
+            if openai_client:
+                response = openai_client.chat.completions.create(
+                    model=openai_model,
+                    messages=conversation_history,
+                    max_tokens=1024,
+                    temperature=0.7,
+                    stream=False,
+                )
+                yield response.choices[0].message.content
+            else:
+                yield "OpenAI client not configured properly."
+        except Exception as inner_e:
+            yield f"\n[OpenAI fallback error: {str(inner_e)}]\n"

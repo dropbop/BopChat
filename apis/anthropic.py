@@ -2,7 +2,10 @@ import os
 import anthropic
 
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
-anthropic_client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+anthropic_client = None  # Default to None
+
+if ANTHROPIC_API_KEY:
+    anthropic_client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
 def anthropic_query(conversation_history):
     """
@@ -15,6 +18,9 @@ def anthropic_query(conversation_history):
         tuple: (assistant_response, error_message) - error_message is None if no error.
     """
     try:
+        if not ANTHROPIC_API_KEY or not anthropic_client:
+            return None, "Anthropic API key not configured."
+            
         response = anthropic_client.messages.create(
             model="claude-3-5-sonnet-20241022",
             max_tokens=4096,
@@ -35,6 +41,10 @@ def anthropic_stream_query(conversation_history):
     Yields:
         str: Chunks of the streaming response.
     """
+    if not ANTHROPIC_API_KEY or not anthropic_client:
+        yield "Anthropic API key not configured."
+        return
+        
     try:
         with anthropic_client.messages.stream(
             model="claude-3-5-sonnet-20241022",
@@ -45,9 +55,15 @@ def anthropic_stream_query(conversation_history):
                 yield chunk
     except Exception as e:
         yield f"\n[Anthropic streaming error: {str(e)}. Falling back...]\n"
-        response = anthropic_client.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=4096,
-            messages=conversation_history,
-        )
-        yield response.content[0].text
+        try:
+            if anthropic_client:
+                response = anthropic_client.messages.create(
+                    model="claude-3-5-sonnet-20241022",
+                    max_tokens=4096,
+                    messages=conversation_history,
+                )
+                yield response.content[0].text
+            else:
+                yield "Anthropic client not configured properly."
+        except Exception as inner_e:
+            yield f"\n[Anthropic fallback error: {str(inner_e)}]\n"
