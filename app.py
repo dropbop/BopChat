@@ -1,11 +1,17 @@
 import os
 from flask import Flask
-from models import init_db
-from login import login_bp
-from chat import chat_bp # Import chat_bp
-from history import history_bp # Import history_bp
+from dotenv import load_dotenv
 from markupsafe import Markup
 import markdown
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Import components from their new locations
+from core.models import init_db
+from core.auth import login_bp  # Assuming login.py was renamed to auth.py but blueprint name is the same
+from core.chat import chat_bp
+from core.history import history_bp
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "supersecretkey")
@@ -20,13 +26,13 @@ def markdown_filter(text):
     return Markup(html)
 
 
-# Initialize the database (creates tables if they don’t exist)
+# Initialize the database (creates tables if they don't exist)
 init_db()
 
 # Register blueprints
 app.register_blueprint(login_bp)
-app.register_blueprint(chat_bp) # Register chat_bp
-app.register_blueprint(history_bp) # Register history_bp
+app.register_blueprint(chat_bp)
+app.register_blueprint(history_bp)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=os.environ.get("FLASK_ENV") == "development")
