@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, jsonify, session, Response, stream_with_context
-from core.utils import login_required
+from app import login_required  # Import directly from app
 from apis.openai import openai_query, openai_stream_query
 from apis.anthropic import anthropic_query, anthropic_stream_query
 
