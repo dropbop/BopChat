@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BopChat</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>BopChat</h1>
+        <p>Welcome to BopChat - A chatbot interface using your own API keys</p>
+        
+        <div class="nav-links">
+            <a href="/login">Login</a>
+            <a href="/chat-history">Chat History</a>
+        </div>
+        
+        <div class="chat-container">
+            <div class="chat-messages" id="chat-messages">
+                <!-- Messages will appear here -->
+                <div class="message system-message">
+                    BopChat is ready! Type a message to get started.
+                </div>
+            </div>
+            
+            <div class="chat-input">
+                <textarea id="user-input" placeholder="Type your message here..."></textarea>
+                <button id="send-button">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
