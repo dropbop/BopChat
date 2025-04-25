@@ -41,6 +41,15 @@ def chat_history():
     except Exception as e:
         logger.error(f"Error rendering chat history page: {e}")
         return "An error occurred loading the chat history page.", 500
+        
+@app.route('/tests')
+def tests():
+    """Renders the tests page."""
+    try:
+        return render_template('tests.html')
+    except Exception as e:
+        logger.error(f"Error rendering tests page: {e}")
+        return "An error occurred loading the tests page.", 500
 
 @app.route('/api/health')
 def health_check():

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BopChat - Tests</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="window" style="width: 90%; max-width: 900px; margin: 32px auto;">
+        <div class="title-bar">
+            <div class="title-bar-text">BopChat - Tests</div>
+            <div class="title-bar-controls">
+                <button aria-label="Minimize"></button>
+                <button aria-label="Maximize"></button>
+                <button aria-label="Close"></button>
+            </div>
+        </div>
+        <div class="window-body">
+            <div class="status-bar">
+                <p class="status-bar-field">Test Suite</p>
+                <div class="status-bar-field" style="text-align: right;">
+                    <a href="/">Home</a> | 
+                    <a href="/login">Login</a> | 
+                    <a href="/chat-history">Chat History</a>
+                </div>
+            </div>
+            
+            <h4>BopChat Tests</h4>
+            <p>This page contains tests to verify the functionality of BopChat services.</p>
+            
+            <fieldset>
+                <legend>API Connection Tests</legend>
+                <div class="field-row">
+                    <button id="test-api-connection">Test API Connection</button>
+                    <p id="api-connection-result">Not tested</p>
+                </div>
+            </fieldset>
+            
+            <fieldset>
+                <legend>Database Tests</legend>
+                <div class="field-row">
+                    <button id="test-db-connection">Test Database Connection</button>
+                    <p id="db-connection-result">Not tested</p>
+                </div>
+            </fieldset>
+            
+            <fieldset>
+                <legend>LLM Integration Tests</legend>
+                <div class="field-row">
+                    <button id="test-llm-api">Test LLM API</button>
+                    <p id="llm-api-result">Not tested</p>
+                </div>
+            </fieldset>
+            
+            <div id="test-results" style="margin-top: 20px;">
+                <!-- Test results will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/tests.js') }}"></script>
+</body>
+</html>
